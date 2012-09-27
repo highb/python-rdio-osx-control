@@ -1,4 +1,4 @@
-from bottle import route, run
+from bottle import route, run, get, response
 import subprocess
 
 def as_rdio_cmd(cmd):
@@ -28,6 +28,28 @@ def prev_track():
 def next_track():
   subprocess.call(as_rdio_cmd('next track'))
   return {'status':'ok'}
+
+# Doesn't work so well right now
+@get('/track_art')
+def get_track_art():
+  artwork = subprocess.check_output(as_rdio_cmd('get the artwork of the current track'))
+  response.content_type = 'image/tiff'
+  return artwork
+
+@get('/track_info')
+def get_track_info():
+  name = subprocess.check_output(as_rdio_cmd('get the name of the current track'))
+  artist = subprocess.check_output(as_rdio_cmd('get the artist of the current track'))
+  album = subprocess.check_output(as_rdio_cmd('get the album of the current track'))
+  duration = subprocess.check_output(as_rdio_cmd('get the duration of the current track'))
+  rdio_url = subprocess.check_output(as_rdio_cmd('get the rdio url of the current track'))
+  return {
+      'name':name,
+      'artist':artist,
+      'album':album,
+      'duration':duration,
+      'rdio_url':rdio_url
+      }
 
 
 run(host='localhost', port=8080)
