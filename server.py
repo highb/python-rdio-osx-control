@@ -4,6 +4,10 @@ import subprocess
 def as_rdio_cmd(cmd):
   return ["osascript", "-e", """tell app "Rdio" to """ + cmd + """"""]
 
+@route('/')
+def default():
+  return {'methods_available': ['play_pause', 'play', 'pause', 'prev_track', 'next_track', 'track_art', 'track_info']}
+
 @route('/play_pause')
 def play_pause():
   subprocess.call(as_rdio_cmd('playpause'))
